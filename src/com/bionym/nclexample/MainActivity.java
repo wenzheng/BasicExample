@@ -31,10 +31,11 @@ public class MainActivity extends Activity implements ProvisionController.Provis
     
     EditText nymulatorIp;
     RadioGroup selectLibrary;
-    Button startProvision, startValidation, disconnect;
+    Button startProvision, startValidation, disconnect, ecgcontrol;
 
     ProvisionController provisionController;
     ValidationController valiationController;
+    ECGController ecgController;
     boolean connectNymi = true;
 
     int nymiHandle = Ncl.NYMI_HANDLE_ANY;
@@ -57,6 +58,7 @@ public class MainActivity extends Activity implements ProvisionController.Provis
         startProvision = (Button) findViewById(R.id.provision);
         startValidation = (Button) findViewById(R.id.validation);
 		disconnect = (Button) findViewById(R.id.disconnect);
+		ecgcontrol =  (Button) findViewById(R.id.ecgcontrol);
 		
         selectLibrary.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                  @Override
@@ -156,6 +158,17 @@ public class MainActivity extends Activity implements ProvisionController.Provis
 	                startProvision.setEnabled(true);
 					Ncl.disconnect(nymiHandle);
 					nymiHandle = -1;
+				}
+			}
+		});
+        ecgcontrol.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (nymiHandle >= 0) {
+					if (ecgController == null){
+						ecgController = new ECGController(MainActivity.this , nymiHandle);
+					}
+					ecgController.updateState();
 				}
 			}
 		});

@@ -23,10 +23,11 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int action_settings=0x7f080008;
+        public static final int action_settings=0x7f080009;
         public static final int connectNymulator=0x7f080003;
         public static final int connectNymy=0x7f080002;
         public static final int disconnect=0x7f080007;
+        public static final int ecgcontrol=0x7f080008;
         public static final int nymulatorIp=0x7f080004;
         public static final int provision=0x7f080005;
         public static final int selectLib=0x7f080001;
@@ -45,6 +46,9 @@ public final class R {
         public static final int connect_nymi=0x7f050003;
         public static final int connect_nymuator=0x7f050004;
         public static final int disconnect=0x7f050008;
+        public static final int ecgStart=0x7f05000a;
+        public static final int ecgStop=0x7f05000b;
+        public static final int ecgcontrol=0x7f050009;
         public static final int nymuator_address_hint=0x7f050005;
         public static final int provision=0x7f050006;
         public static final int title_activity_main=0x7f050002;

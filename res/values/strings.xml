@@ -9,4 +9,7 @@
 	<string name="provision">Provision Nymi</string>
 	<string name="validation">Validate Nymi</string>
 	<string name="disconnect">Disconnect Nymi</string>
+	<string name="ecgcontrol">Start ECG</string>
+	<string name="ecgStart">Start ECG</string>
+	<string name="ecgStop">Stop ECG</string>
 </resources>
