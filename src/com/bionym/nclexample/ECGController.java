@@ -45,7 +45,6 @@ public class ECGController {
 	
 	private List<Integer> ecgData = new CopyOnWriteArrayList<Integer>();
 	
-	private AWSSimpleQueueServiceUtil awssqsUtil =   AWSSimpleQueueServiceUtil.getInstance();
 	/**
 	 * Constructor
 	 * @param context the context
@@ -77,7 +76,7 @@ public class ECGController {
 			public void handleMessage(Message msg) {
 				super.handleMessage(msg);
 				if(msg.what==1){
-					StringBuilder sb = new StringBuilder();
+					final StringBuilder sb = new StringBuilder();
 					for (Integer test: ecgData){
 						sb.append(test);
 						sb.append("#");
@@ -85,7 +84,12 @@ public class ECGController {
 					Toast.makeText(context, "The size of data is: "+ecgData.size(),
 	                        Toast.LENGTH_LONG).show();
 					Log.d(LOG_TAG, "The size is "+ ecgData.size() + "and the values are: " + sb.toString());
-					awssqsUtil.sendMessageToQueue(sb.toString());
+					new Thread(new Runnable(){
+					    @Override
+					    public void run() {
+					    	AWSSimpleQueueServiceUtil.getInstance().sendMessageToQueue(sb.toString());
+					    }
+					}).start();
 					ecgData.clear();
 				}
 			}

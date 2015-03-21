@@ -42,9 +42,8 @@ public class AWSSimpleQueueServiceUtil {
 			 * is stored in web-inf/classes
 			 */
 			// AmazonSQS sqs = new AmazonSQSClient(new
-			// ClasspathPropertiesFileCredentialsProvider());
-			
-			queueUrl = getQueueUrl(simpleQueue);
+			// ClasspathPropertiesFileCredentialsProvider());			
+			this.queueUrl = getQueueUrl(simpleQueue);
 
 		} catch (Exception e) {
 			System.out.println("exception while creating awss3client : " + e);
@@ -67,7 +66,7 @@ public class AWSSimpleQueueServiceUtil {
      * @param message
      */
     public void sendMessageToQueue(String message){
-        SendMessageResult messageResult =  this.sqs.sendMessage(new SendMessageRequest(queueUrl, message));
+        SendMessageResult messageResult =  this.sqs.sendMessage(new SendMessageRequest(awssqsUtil.queueUrl, message));
         System.out.println(messageResult.toString());
     }
     
