@@ -1,5 +1,11 @@
 package com.bionym.nclexample;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import com.bionym.ncl.Ncl;
 import com.bionym.ncl.NclCallback;
 import com.bionym.ncl.NclEvent;
@@ -8,7 +14,10 @@ import com.bionym.ncl.NclEventType;
 import com.bionym.ncl.NclProvision;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
+import android.widget.Toast;
 
 public class ECGController {
 	// Constants
@@ -31,6 +40,11 @@ public class ECGController {
 	State state;
 
 	Context context;
+	
+	private Timer timer;	
+	
+	private List<Integer> ecgData = new CopyOnWriteArrayList<Integer>();
+	
 
 	/**
 	 * Constructor
@@ -54,6 +68,38 @@ public class ECGController {
 	public int getNymiHandle() {
 		return nymiHandle;
 	}
+	
+	private void startTimer(){
+		timer = new Timer();
+		final Handler timerHandler = new Handler() {
+
+			@Override
+			public void handleMessage(Message msg) {
+				super.handleMessage(msg);
+				if(msg.what==1){
+					StringBuilder sb = new StringBuilder();
+					for (Integer test: ecgData){
+						sb.append(test);
+						sb.append(":");
+					}
+					Toast.makeText(context, "The size of data is: "+ecgData.size(),
+	                        Toast.LENGTH_LONG).show();
+					Log.d(LOG_TAG, "The size is "+ ecgData.size() + "and the values are: " + sb.toString());
+					ecgData.clear();
+				}
+			}
+		};
+		timer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				Message msg = new Message();
+				msg.what = 1;
+				timerHandler.sendMessage(msg);
+			}
+
+		}, 5000, 5000);
+
+	}
 
 
 	/**
@@ -74,7 +120,8 @@ public class ECGController {
 		public void call(final NclEvent event, final Object userData) {
 			Log.d(LOG_TAG, this.toString() + ": " + event.getClass().getName());
 			if (event instanceof NclEventEcg) {
-				Log.d(LOG_TAG, "The sample values are"+((NclEventEcg) event).samples);
+				for (int i=0; i<((NclEventEcg) event).samples.length;i++ )
+				ecgData.add(((NclEventEcg) event).samples[i]);
 			}
 		}
 	}
@@ -88,12 +135,14 @@ public class ECGController {
 		switch (state){
 		case Stopped: {
 			Ncl.startEcgStream(nymiHandle);
+			startTimer();
 			state = State.Started;
 			break;
 		}
 		case Started: {
 			Ncl.stopEcgStream(nymiHandle);
 			state = State.Stopped;
+			timer.cancel();
 			break;
 		}
 		default: break;
