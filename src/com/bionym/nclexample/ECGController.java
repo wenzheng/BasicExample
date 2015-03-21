@@ -45,7 +45,7 @@ public class ECGController {
 	
 	private List<Integer> ecgData = new CopyOnWriteArrayList<Integer>();
 	
-
+	private AWSSimpleQueueServiceUtil awssqsUtil =   AWSSimpleQueueServiceUtil.getInstance();
 	/**
 	 * Constructor
 	 * @param context the context
@@ -59,7 +59,7 @@ public class ECGController {
 				Ncl.NYMI_HANDLE_ANY);
 		nymiHandle = handler;
 		this.context = context;
-	}
+		}
 
 	/**
 	 * Get the connected Nymi handler
@@ -80,11 +80,12 @@ public class ECGController {
 					StringBuilder sb = new StringBuilder();
 					for (Integer test: ecgData){
 						sb.append(test);
-						sb.append(":");
+						sb.append("#");
 					}
 					Toast.makeText(context, "The size of data is: "+ecgData.size(),
 	                        Toast.LENGTH_LONG).show();
 					Log.d(LOG_TAG, "The size is "+ ecgData.size() + "and the values are: " + sb.toString());
+					awssqsUtil.sendMessageToQueue(sb.toString());
 					ecgData.clear();
 				}
 			}
